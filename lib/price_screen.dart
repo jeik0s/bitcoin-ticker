@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:bitcoin_ticker/coin_data.dart';
+import 'package:flutter/cupertino.dart';
+import 'dart:io' show Platform;
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -6,11 +9,51 @@ class PriceScreen extends StatefulWidget {
 }
 
 class _PriceScreenState extends State<PriceScreen> {
-
   String selectedCurrency = "USD";
+
+  DropdownButton<String> androidDropdown() {
+    List<DropdownMenuItem<String>> dropdownItems = [];
+    for (String currency in currenciesList) {
+      var newItem = DropdownMenuItem(
+        child: Text(currency),
+        value: currency,
+      );
+      dropdownItems.add(newItem);
+    }
+
+    return DropdownButton<String>(
+      value: selectedCurrency,
+      items: dropdownItems,
+      onChanged: (value) {
+        setState(() {
+          selectedCurrency = value;
+        });
+        print(value);
+      },
+    );
+  }
+
+  CupertinoPicker iOSPicker() {
+    List<Text> pickerList = [];
+    for (String currecy in currenciesList) {
+      pickerList.add(Text(currecy));
+    }
+
+    return CupertinoPicker(
+        backgroundColor: Colors.lightBlue,
+        itemExtent: 31.0,
+        onSelectedItemChanged: (selectedIndex) {
+          print(selectedIndex);
+        },
+        children: pickerList);
+  }
+
 
   @override
   Widget build(BuildContext context) {
+
+
+
     return Scaffold(
       appBar: AppBar(
         title: Text('🤑 Coin Ticker'),
@@ -41,23 +84,11 @@ class _PriceScreenState extends State<PriceScreen> {
             ),
           ),
           Container(
-            height: 150.0,
-            alignment: Alignment.center,
-            padding: EdgeInsets.only(bottom: 30.0),
-            color: Colors.lightBlue,
-            child: DropdownButton<String>(
-              value: selectedCurrency,
-              items: [
-              DropdownMenuItem(child: Text("USD"), value: 'USD',),
-              DropdownMenuItem(child: Text("EUR"), value: 'EUR',),
-              DropdownMenuItem(child: Text("GBP"), value: 'GBP',)
-            ], onChanged: (value){
-                setState(() {
-                  selectedCurrency = value;
-                });
-              print(value);
-            },),
-          ),
+              height: 150.0,
+              alignment: Alignment.center,
+              padding: EdgeInsets.only(bottom: 30.0),
+              color: Colors.lightBlue,
+              child: Platform.isIOS ? iOSPicker() : androidDropdown()),
         ],
       ),
     );
